@@ -10,6 +10,12 @@ from django.db import models
 from pgvector.django import VectorField
 from django.contrib.auth.models import AbstractUser
 
+class User(AbstractUser):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    testerino_fielderino = models.BooleanField(default=False)
+    sto_ti_cinis = models.TextField(default='', blank=True, null=True)
+
+
 class Embeddings(models.Model):
     id = models.BigAutoField(primary_key=True)
     embedding = VectorField(dimensions=1536)
@@ -30,10 +36,29 @@ class RefreshTokens(models.Model):
         db_table = 'refresh_tokens'
 
 
-class Setups(models.Model):
+class SetupData(models.Model):
     id = models.BigAutoField(primary_key=True)
-    user = models.ForeignKey('User', models.DO_NOTHING)
+    data = models.JSONField()
+    notes = models.TextField(default='', blank=True, null=True)
+
+    class Meta:
+        db_table = 'setup_data'
+
+
+class Setup(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    user = models.ForeignKey('User', on_delete=models.DO_NOTHING)
     created_at = models.DateTimeField()
+    title = models.CharField(max_length=255)
+    gameId = models.CharField(max_length=255)
+    car = models.CharField(max_length=255)
+    track = models.CharField(max_length=255)
+    description = models.TextField()
+    setupData = models.OneToOneField('SetupData', on_delete=models.DO_NOTHING)
+    videoUrl = models.CharField(max_length=255, blank=True, null=True)
+    rating = models.IntegerField()
+    ratingCount = models.IntegerField()
+    downloads = models.IntegerField()
 
     class Meta:
         db_table = 'setups'
@@ -48,10 +73,3 @@ class Test(models.Model):
 
     class Meta:
         db_table = 'test'
-
-
-class User(AbstractUser):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    testerino_fielderino = models.BooleanField(default=False)
-    sto_ti_cinis = models.TextField(default='', blank=True, null=True)
-    
