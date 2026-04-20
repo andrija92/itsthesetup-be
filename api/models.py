@@ -7,6 +7,7 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 import uuid
 from django.db import models
+from django.db.models.functions import Concat
 from pgvector.django import VectorField
 from django.contrib.auth.models import AbstractUser
 
@@ -15,6 +16,15 @@ class User(AbstractUser):
     testerino_fielderino = models.BooleanField(default=False)
     sto_ti_cinis = models.TextField(default='', blank=True, null=True)
 
+
+class Game(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    full_name = models.CharField(max_length=255)
+    short_name = models.CharField(max_length=10)
+    description = models.TextField()
+
+    class Meta:
+        db_table = 'games'
 
 class Embeddings(models.Model):
     id = models.BigAutoField(primary_key=True)
@@ -45,14 +55,39 @@ class SetupData(models.Model):
         db_table = 'setup_data'
 
 
+class Car(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    description = models.TextField()
+    games = models.ManyToManyField(Game)
+    brand = models.CharField(max_length=255)
+    model = models.CharField(max_length=255)
+    full_name = models.GeneratedField(
+        expression=Concat(models.F("brand"), models.Value(" "), models.F("model")),
+        output_field=models.TextField(),
+        db_persist=True
+    )
+
+    class Meta:
+        db_table = 'cars'
+
+class Track(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    location = models.CharField(max_length=255)
+    games = models.ManyToManyField(Game)
+
+    class Meta:
+        db_table = 'tracks'
+
 class Setup(models.Model):
     id = models.BigAutoField(primary_key=True)
     user = models.ForeignKey('User', on_delete=models.DO_NOTHING)
     created_at = models.DateTimeField()
     title = models.CharField(max_length=255)
-    gameId = models.CharField(max_length=255)
-    car = models.CharField(max_length=255)
-    track = models.CharField(max_length=255)
+    game = models.ForeignKey('Game', on_delete=models.DO_NOTHING)
+    car = models.ForeignKey('Car', on_delete=models.DO_NOTHING)
+    track = models.ForeignKey('Track', on_delete=models.DO_NOTHING)
     description = models.TextField()
     setupData = models.OneToOneField('SetupData', on_delete=models.DO_NOTHING)
     videoUrl = models.CharField(max_length=255, blank=True, null=True)
@@ -62,14 +97,3 @@ class Setup(models.Model):
 
     class Meta:
         db_table = 'setups'
-
-
-class Test(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    name = models.CharField(max_length=255)
-    description = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        db_table = 'test'

@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 
-from api.serializers import TestSerializer
-from .models import Test
+from api.serializers import SetupDetailSerializer, SetupListSerializer
+from .models import Setup
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth import authenticate, get_user_model
@@ -10,11 +10,6 @@ from dotenv import load_dotenv
 from api.helpers.jwt import generateToken, generateRefreshToken
 
 load_dotenv()
-
-class TestView(viewsets.ModelViewSet):
-    queryset = Test.objects.all()
-    serializer_class = TestSerializer
-
 class LoginView(APIView):
     
     JWT_NAME = os.getenv("JWT_NAME")
@@ -51,5 +46,16 @@ class RegisterView(APIView):
 
 class LogoutView(APIView):
     def get(self, request):
+        # treba izbrisat refresh token iz baze
         print(request.user)
         return Response({'message': 'Logged out successfully'})
+
+
+class SetupView(viewsets.ModelViewSet):
+    queryset = Setup.objects.all()
+    
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return SetupListSerializer
+        
+        return SetupDetailSerializer
