@@ -1,2 +1,4 @@
-seeding setupova
+filter sa igricama da radi na setupe
+moji setupovi endpoint
+osiguravanje editovanja setupa
 da je random koja staza je u koju igricu a ne sve u svaku, i isto za auta
