@@ -27,21 +27,23 @@ class GameSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class SetupDetailSerializer(serializers.ModelSerializer):
-    setupData = SetupDataSerializer()
+    setup_data = SetupDataSerializer()
     user = PublicUserSerializer()
     track = TrackSerializer()
     car = CarSerializer()
     game = GameSerializer()
+    
     class Meta:
         model = Setup
         fields = '__all__'
 
 
 class SetupListSerializer(serializers.ModelSerializer):
-    user = PublicUserSerializer()
-    track = TrackSerializer()
-    car = CarSerializer()
-    game = GameSerializer()
+    user = serializers.StringRelatedField()
+    track = serializers.StringRelatedField()
+    car = serializers.StringRelatedField()
+    game = serializers.StringRelatedField()
+
     class Meta:
         model = Setup
-        fields = ['id', 'title', 'user', 'created_at', 'rating', 'ratingCount', 'track', 'car', 'game']
+        fields = ['id', 'title', 'user', 'created_at', 'rating', 'rating_count', 'track', 'car', 'game']

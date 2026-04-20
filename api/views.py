@@ -1,4 +1,4 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, filters
 
 from api.serializers import SetupDetailSerializer, SetupListSerializer
 from .models import Setup
@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 from api.helpers.jwt import generateToken, generateRefreshToken
 
 load_dotenv()
+
 class LoginView(APIView):
     
     JWT_NAME = os.getenv("JWT_NAME")
@@ -53,9 +54,17 @@ class LogoutView(APIView):
 
 class SetupView(viewsets.ModelViewSet):
     queryset = Setup.objects.all()
-    
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['track__name', 'car__full_name', 'title']
+
     def get_serializer_class(self):
         if self.action == 'list':
             return SetupListSerializer
         
         return SetupDetailSerializer
+
+    def get_queryset(self):
+        if self.action == 'list':
+            print("list")
+            return Setup.objects.select_related('user', 'track', 'car', 'game')
+        return Setup.objects.select_related('user', 'track', 'car', 'game', 'setup_data')

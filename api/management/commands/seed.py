@@ -18,4 +18,6 @@ class Command(BaseCommand):
         TrackFactory.create_batch(options['tracks'], games=games)
         self.stdout.write('Seeding cars...')
         CarFactory.create_batch(options['cars'], games=games)
+        self.stdout.write('Seeding setups...')
+        SetupFactory.create_batch(options['setups'])
         self.stdout.write(self.style.SUCCESS('Done!'))

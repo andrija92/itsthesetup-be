@@ -20,7 +20,7 @@ from api.views import LoginView, RegisterView, SetupView, LogoutView
 from rest_framework import routers
 
 router = routers.DefaultRouter()
-router.register(r'setup', SetupView)
+router.register(r'setups', SetupView)
 
 urlpatterns = [
     path('admin/', admin.site.urls),

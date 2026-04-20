@@ -87,6 +87,7 @@ class CarFactory(DjangoModelFactory):
         # Add the iterable of groups using bulk addition
         self.games.add(*extracted)
 
+
 class SetupDataFactory(DjangoModelFactory):
     class Meta:
         model = SetupData
