@@ -46,4 +46,4 @@ class SetupListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Setup
-        fields = ['id', 'title', 'user', 'created_at', 'rating', 'rating_count', 'track', 'car', 'game']
+        fields = ['id', 'title', 'user', 'created_at', 'rating', 'rating_count', 'track', 'car', 'game', 'downloads_count']
